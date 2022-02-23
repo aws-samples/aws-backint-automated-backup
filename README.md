@@ -1,4 +1,4 @@
-## My Project
+## Automatically Backup SAP HANA databases using Systems Manager and Amazon EventBridge
 
 TODO: Fill this README out!
 
