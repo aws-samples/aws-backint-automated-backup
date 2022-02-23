@@ -1,10 +1,9 @@
 ## Automatically Backup SAP HANA databases using Systems Manager and Amazon EventBridge
 
-TODO: Fill this README out!
+Kindly refer to json file HDB_Backup_SSM_Document.json
 
 Be sure to:
 
-* Change the title in this README
 * Edit your repository description on GitHub
 
 ## Security
