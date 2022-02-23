@@ -1,0 +1,58 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: MIT-0
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this
+ * software and associated documentation files (the "Software"), to deal in the Software
+ * without restriction, including without limitation the rights to use, copy, modify,
+ * merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+ * PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+{
+  "schemaVersion": "2.2",
+  "description": "Document to backup System and all Tenant DBs. Script is tested only for HANA 2.0.",
+  "parameters": {
+    "BackupType": {
+      "description": "Select the type of backup; INCREMENTAL, DIFFERENTIAL or leave the field blank for FULL backup",
+      "type": "String",
+      "allowedValues": [
+        "",
+        "INCREMENTAL",
+        "DIFFERENTIAL"
+      ],
+      "default": ""
+    }
+  },
+  "mainSteps": [
+    {
+      "action": "aws:runShellScript",
+      "name": "backupHANA",
+      "inputs": {
+        "runCommand": [
+          "#!/bin/bash",
+          "bkp_typ={{BackupType}}",
+          "sidadm=`egrep -o \"[a-z][0-9][0-9]adm|[a-z][a-z][0-9]adm|[a-z][a-z][a-z]adm\" /usr/sap/sapservices`",
+          "sid=`echo ${sidadm:0:3}`",
+          "sid_array=(`su - $sidadm -c \"hdbsql -U SYSTEM -ajCx \\\"SELECT DATABASE_NAME FROM M_DATABASES WHERE DATABASE_NAME !='SYSTEMDB'\\\"\"`)",
+          "for db in \"${sid_array[@]}\"",
+          "do",
+          "echo \"`date`  : Starting ${bkp_typ^^} backup for $db\"",
+          "su - $sidadm -c \"hdbsql -U SYSTEM -x \\\"BACKUP DATA ${bkp_typ^^} FOR $db USING BACKINT ('/usr/sap/${sid^^}/SYS/global/hdb/backint/DB_${db}/${db}_backup_`date +%%A_%%B_%%d_%%Y_%%T_%%Z`')\\\"\"",
+          "done",
+          "echo \"`date`  : Starting backup for SystemDB\"",
+          "su - $sidadm -c \"hdbsql -U SYSTEM -x \\\"BACKUP DATA USING BACKINT ('/usr/sap/${sid^^}/SYS/global/hdb/backint/SYSTEMDB/SystemDB_backup_`date +%%A_%%B_%%d_%%Y_%%T_%%Z`')\\\"\"",
+          "echo \"Backup operation complete:\"",
+          "su - $sidadm -c \"hdbsql -U SYSTEM -AjCx \\\"SELECT TOP 3 DATABASE_NAME, ENTRY_TYPE_NAME, UTC_END_TIME, STATE_NAME, MESSAGE FROM SYS_DATABASES.M_BACKUP_CATALOG WHERE ENTRY_TYPE_NAME LIKE '%data%'ORDER BY UTC_END_TIME DESC\\\"\""
+        ]
+      }
+    }
+  ]
+}
