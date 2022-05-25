@@ -52,6 +52,8 @@
           "echo \"Backup operation complete:\"",
           "su - $sidadm -c \"hdbsql -U SYSTEM -AjCx \\\"SELECT TOP 3 DATABASE_NAME, ENTRY_TYPE_NAME, UTC_END_TIME, STATE_NAME, MESSAGE FROM SYS_DATABASES.M_BACKUP_CATALOG WHERE ENTRY_TYPE_NAME LIKE '%data%'ORDER BY UTC_END_TIME DESC\\\"\""
         ]
+        "timeoutSeconds": "36000"
+        "isEnd: true"
       }
     }
   ]
