@@ -7,7 +7,7 @@ Kindly refer to json file HDB_Backup_SSM_Document.json
 
 The code in this repository helps you set up the following target architecture.
 
-<img width="854" alt="image" src="https://user-images.githubusercontent.com/98596200/172308234-4c256ca5-a5dc-4126-b6a6-647ba1d47986.png">
+<img width="468" alt="image" src="https://user-images.githubusercontent.com/98596200/172576967-e1c6227e-43e7-4513-8686-dc1f7191d140.png">
 
 For prerequisites and instructions for using this AWS Prescriptive Guidance pattern, see [Automatically Backup SAP HANA databases using Systems Manager and Amazon EventBridge](https://apg-library.amazonaws.com/content/0aa22a27-d100-483d-95f9-c3101f40402c).
 
