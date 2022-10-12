@@ -11,3 +11,5 @@ The code in this repository helps you set up the following target architecture.
 
 For prerequisites and instructions for using this AWS Prescriptive Guidance pattern, see [Automatically Backup SAP HANA databases using Systems Manager and Amazon EventBridge](https://apg-library.amazonaws.com/content/0aa22a27-d100-483d-95f9-c3101f40402c).
 
+Please note - This code enables multiple hana databases to be backed up in one single document run. 
+Limitation - All tenant databases including systemDB are backed up via this script for consistency. You cannot backup only specific tenant database using this script.
